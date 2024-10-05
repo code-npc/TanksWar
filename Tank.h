@@ -1,61 +1,54 @@
 #pragma once
-class Pos {
-public:
-	int x=200; //坦克的初始坐标x
-	int y=200; //坦克的初始坐标y
-	int dx=5; // 每帧 x 方向移动的像素数
-	int dy=3; // 每帧 y 方向移动的像素数
 
-};
+// 定义四个方向
+enum Direction { UP, DOWN, LEFT, RIGHT };
 
 class TankPart {
 
 public:
-	virtual void draw() = 0;
+	virtual void draw(int ,int,Direction) = 0;
 	virtual void clear() = 0;
 };
 
 
-class Wheel : TankPart,Pos {
+class Wheel : TankPart{
 
 public:
-	void draw() override;
+	void draw(int ,int, Direction) override;
 	void clear() override;
 };
 
-class Body : TankPart,Pos {
+class Body : TankPart{
 public:
-	void draw() override;
+	void draw(int ,int, Direction) override;
 	void clear() override;
 };
 
-class Barrel : TankPart,Pos {
+class Barrel : TankPart{
 public:
-	void draw() override;
+	void draw(int ,int, Direction) override;
 	void clear() override;
 };
 
-class Tank : Pos{
-	//坦克的组成
-	//Wheel wheel[2];
-	Wheel wheel;
+class Tank{
+	int x = 255; //坦克的初始坐标x
+	int y = 200; //坦克的初始坐标y
+	
+	Wheel wheel;//坦克的组成
 	Body body;
 	int bullet;
 	Barrel barrel;
+	Direction dir;          // 坦克的方向
 	
 
 public:
-	
-	// 定义一些方法
-	/*int getX() { return x; }
-	int getY() { return y; }
-	int getDx() { return dx; }
-	int getDy() { return dy; }
-	*/
-	void move();
+	void move(int);
 	void attack();
 
 	void draw();
 	void clear();
-};
 
+	Tank() {
+		dir = UP;
+	}
+};

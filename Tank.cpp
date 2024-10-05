@@ -2,92 +2,104 @@
 #include <iostream>
 #include <graphics.h>		// 引用图形库头文件
 #include <conio.h>
+/*
+*	坦克整体大小：110 * 50
+*	窗口大小：640 * 480
+*/
 
 
 
-
-void Body::draw() {
-
-	// 绘制躯体
-	rectangle(x, y - 25, x + 80, y + 25);
-
-	// 更新躯体的位置
-	x += dx;
-	y += dy;
-
-	// 碰撞检测：让躯体在窗口边界内反弹
-	if (x + 110 >= 640 || x <= 0) {
-		dx = -dx;  // 反转 x 方向的移动
-	}
-	if (y + 25 >= 480 || y <= 25) {
-		dy = -dy;  // 反转 y 方向的移动
+void Body::draw(int x,int y,Direction dir) {
+	switch (dir) {
+	case UP:
+		// 绘制躯体
+		rectangle(x-25, y - 25, x + 25, y + 55);
+		break;
+	case DOWN:
+		// 绘制躯体
+		rectangle(x - 25, y - 55, x + 25, y + 25);
+		break;
+	case LEFT:
+		// 绘制躯体
+		rectangle(x - 25, y - 25, x + 55, y + 25);
+		break;
+	case RIGHT:
+		// 绘制躯体
+		rectangle(x - 55, y - 25, x + 25, y + 25);
+		break;
 	}
 }
 void Body::clear() {
 }
 
-void Wheel::draw() {
-	circle(200, 200, 10);	// 画圆，圆心(200, 200)，半径 100
-	circle(200, 250, 10);
-	circle(280, 200, 10);
-	circle(280, 250, 10);
+void Wheel::draw(int ,int,Direction) {
+	//circle(200, 200, 10);	// 画圆，圆心(200, 200)，半径 100
+	//circle(200, 250, 10);
+	//circle(280, 200, 10);
+	//circle(280, 250, 10);
 }
 void Wheel::clear() {
 }
 
-void Barrel::draw() {
+void Barrel::draw(int x ,int y,Direction dir) {
+	switch (dir) {
+	case UP:
+		rectangle(x - 5, y - 55, x + 5, y - 25);// 枪管
 
-	rectangle(x+80, y-5, x+110, y+5);// 枪管
-	// 更新枪管的位置
-	x += dx;
-	y += dy;
-	// 碰撞检测：让躯体在窗口边界内反弹
-	if (x + 110 >= 640 || x <= 0) {
-		dx = -dx;  // 反转 x 方向的移动
+		break;
+	case DOWN:
+		rectangle(x - 5, y + 25, x + 5, y + 55);// 枪管
+
+		break;
+	case LEFT:
+		rectangle(x - 55, y - 5, x - 25, y + 5);// 枪管
+
+		break;
+	case RIGHT:
+		rectangle(x + 25, y - 5, x + 55, y + 5);// 枪管
+
+		break;
 	}
-	if (y + 25 >= 480 || y <= 25) {
-		dy = -dy;  // 反转 y 方向的移动
-	}
+
+	
 }
 void Barrel::clear() {
 
 }
 
-
 void Tank::draw() {
-
-		body.draw(); // 绘制身躯
-		wheel.draw(); // 绘制轮子
-		barrel.draw(); // 绘制枪管
+	body.draw(x,y,dir);
+	barrel.draw(x,y,dir);
 }
 
-void Tank::move() {
-	// 检测键盘输入，控制移动方向
-	if (_kbhit()) {  // 如果有键盘输入
-		char ch = _getch();  // 获取键盘输入
-		switch (ch) {
-		case 72:  // 上箭头键（ASCII 72）
-			dx = 0;
-			dy = -5;  // 向上移动
+void Tank::move(int direction) {
+	switch (direction) {
+	case 0:
+		dir = UP;  // 改变方向为向上
+		if (y > 55) {
+			y -= 5;   // 向上移动
 			break;
-		case 80:  // 下箭头键（ASCII 80）
-			dx = 0;
-			dy = 5;   // 向下移动
-			break;
-		case 75:  // 左箭头键（ASCII 75）
-			dx = -5;
-			dy = 0;   // 向左移动
-			break;
-		case 77:  // 右箭头键（ASCII 77）
-			dx = 5;
-			dy = 0;   // 向右移动
-			break;
-		case 27:  // ESC 键（ASCII 27），退出程序
-			EndBatchDraw();  // 关闭双缓冲
-			closegraph();    // 关闭图形窗口
 		}
+	case 1:
+		dir = DOWN;  // 改变方向为向下
+		if (y < 425) {
+			y += 5;   // 向下移动
+			break;
+		}
+	case 2:
+		dir = LEFT;  // 改变方向为向左
+		if (x > 55) {
+			x -= 3;   // 向左移动
+			break;
+		}
+	case 3:
+		dir = RIGHT;  // 改变方向为向右
+		if (x < 585) {
+			x += 3;   // 向右移动
+			break;
+		}
+		
 	}
-	
 }
 
 void Tank::attack() {
