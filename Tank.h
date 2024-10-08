@@ -1,5 +1,8 @@
 #pragma once
 
+extern const int graph_width;
+extern const int graph_high;
+
 // 定义四个方向
 enum Direction { UP, DOWN, LEFT, RIGHT };
 
@@ -33,7 +36,9 @@ public:
 class Tank{
 	int x = 255; //坦克的初始坐标x
 	int y = 200; //坦克的初始坐标y
-	
+	int dx = 5; //每次 x 的移动距离
+	int dy = 3;
+
 	Wheel wheel;//坦克的组成
 	Body body;
 	int bullet;

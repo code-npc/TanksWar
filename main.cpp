@@ -1,14 +1,14 @@
 #include "Tank.h" 
 #include <iostream>
 
-#include <graphics.h>		// 引用图形库头文件
+#include <graphics.h>
 #include <conio.h>
-
 
 int main()
 {
+	
 	Tank tank;
-	initgraph(640, 480); // 创建绘图窗口，大小为 640x480 像素
+	initgraph(graph_width, graph_high); // 创建绘图窗口，大小为 640x480 像素
 
 	// 启动双缓冲绘图
 	BeginBatchDraw();

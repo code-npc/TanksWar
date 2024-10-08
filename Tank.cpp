@@ -1,13 +1,16 @@
 #include "Tank.h"
 #include <iostream>
-#include <graphics.h>		// 引用图形库头文件
+#include <graphics.h>		
 #include <conio.h>
 /*
 *	坦克整体大小：110 * 50
 *	窗口大小：640 * 480
 */
+const int graph_width = 640;
+const int graph_high = 480;
 
-
+int tank_high = 50;
+int tank_width = 110;
 
 void Body::draw(int x,int y,Direction dir) {
 	switch (dir) {
@@ -76,26 +79,26 @@ void Tank::move(int direction) {
 	switch (direction) {
 	case 0:
 		dir = UP;  // 改变方向为向上
-		if (y > 55) {
-			y -= 5;   // 向上移动
+		if (y > tank_width/2) {
+			y -= dy;   // 向上移动
 			break;
 		}
 	case 1:
 		dir = DOWN;  // 改变方向为向下
-		if (y < 425) {
-			y += 5;   // 向下移动
+		if (y < graph_high - (tank_width / 2)) {
+			y += dy;   // 向下移动
 			break;
 		}
 	case 2:
 		dir = LEFT;  // 改变方向为向左
-		if (x > 55) {
-			x -= 3;   // 向左移动
+		if (x > tank_width/2) {
+			x -= dx;   // 向左移动
 			break;
 		}
 	case 3:
 		dir = RIGHT;  // 改变方向为向右
-		if (x < 585) {
-			x += 3;   // 向右移动
+		if (x < graph_width - (tank_width/2)) {
+			x += dx;   // 向右移动
 			break;
 		}
 		
