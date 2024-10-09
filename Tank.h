@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 extern const int graph_width;
 extern const int graph_high;
@@ -42,10 +43,15 @@ public:
 	Direction dir; // 子弹的方向
 
 	Bullet() : b_x(0), b_y(0), dir(UP) {}  // 默认构造函数
-	void fire(int startX, int startY, Direction direction);
-
-	void draw();
+	Bullet(int x, int y , Direction d) {
+		b_x = x; 
+		b_y = y;
+		dir = d;
+	} 
+	void fire();
+	void draw() const;
 	void move();//子弹移动
+	bool isActive() const;
 	
 };
 
@@ -62,11 +68,13 @@ class Tank{
 	Direction dir;          // 坦克的方向
 	
 public:
-	Bullet bullet;
+	std::vector<Bullet> bullets;  // 子弹的容器
+
 	void move(int);
 	void attack();
 	void draw();
 	void clear();
+	void updateBullets();  // 更新所有子弹的位置和状态
 
 	Tank() {
 		dir = UP;

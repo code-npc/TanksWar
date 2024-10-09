@@ -70,18 +70,20 @@ void Barrel::clear() {
 
 }
 
-void Bullet::draw() {
+void Bullet::draw() const {
 	if (active) {
 		rectangle(b_x - 2, b_y - 2, b_x + 2, b_y + 2);  // 画出一个小矩形来表示子弹
 	}
 }
 
-void Bullet::fire(int startX, int startY, Direction direction) {
-	b_x = startX;
-	b_y = startY;
-	dir = direction;
+bool Bullet::isActive() const {
+		return active;
+}
+
+void Bullet::fire() {
 	active = true;
 }
+
 void Bullet::move() {
 	if (!active) return;
 
@@ -98,10 +100,29 @@ void Bullet::move() {
 	}
 }
 
+void Tank::updateBullets() {
+	// 更新所有子弹的状态
+	for (auto& bullet : bullets) {
+		bullet.move();
+	}
+
+	// 移除已经超出屏幕的子弹
+	bullets.erase(
+		std::remove_if(bullets.begin(), bullets.end(), [](Bullet& b) { return !b.isActive(); }),
+		bullets.end()
+	);
+}
+
 void Tank::draw() {
 	body.draw(x,y,dir);
 	barrel.draw(x,y,dir);
-	bullet.draw();  // 绘制子弹（如果存在）
+	//bullet.draw();  // 绘制子弹（如果存在）
+
+	// 绘制所有有效的子弹
+	for (auto& bullet : bullets) {
+		bullet.draw();
+		
+	}
 }
 
 void Tank::move(int direction) {
@@ -135,18 +156,20 @@ void Tank::move(int direction) {
 }
 
 void Tank::attack() {
-	if (!bullet.active) {
-		// 根据坦克的方向发射子弹
-		int bulletStartX = x;
-		int bulletStartY = y;
+	// 根据坦克的方向发射子弹
+	int bulletStartX = x;
+	int bulletStartY = y;
 
-		switch (dir) {
-		case UP:    bulletStartY -= 55; break;
-		case DOWN:  bulletStartY += 55; break;
-		case LEFT:  bulletStartX -= 55; break;
-		case RIGHT: bulletStartX += 55; break;
-		}
-
-		bullet.fire(bulletStartX, bulletStartY, dir);  // 发射子弹
+	switch (dir) {
+	case UP:    bulletStartY -= 55; break;
+	case DOWN:  bulletStartY += 55; break;
+	case LEFT:  bulletStartX -= 55; break;
+	case RIGHT: bulletStartX += 55; break;
+	}
+	
+	// 发射新的子弹，添加到容器中
+	bullets.emplace_back(Bullet(bulletStartX, bulletStartY, dir));
+	for (auto& bullet : bullets) {
+		bullet.fire();  // 发射子弹
 	}
 }

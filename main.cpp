@@ -40,8 +40,7 @@ int main()
 				return 0;
 			}
 		}
-		// 子弹移动
-		tank.bullet.move();
+		tank.updateBullets();
 
 		tank.draw();
 		// 刷新屏幕显示
