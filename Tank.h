@@ -33,23 +33,38 @@ public:
 	void clear() override;
 };
 
+class Bullet {
+public:
+	int b_x;         // 子弹的x坐标
+	int b_y;         // 子弹的y坐标
+	int bullet_speed = 10; // 子弹的移动速度
+	bool active = false; // 子弹是否在移动
+	Direction dir; // 子弹的方向
+
+	Bullet() : b_x(0), b_y(0), dir(UP) {}  // 默认构造函数
+	void fire(int startX, int startY, Direction direction);
+
+	void draw();
+	void move();//子弹移动
+	
+};
+
 class Tank{
+	
 	int x = 255; //坦克的初始坐标x
 	int y = 200; //坦克的初始坐标y
-	int dx = 5; //每次 x 的移动距离
-	int dy = 3;
+	int tank_speed = 5; //坦克的移动速度
 
 	Wheel wheel;//坦克的组成
 	Body body;
-	int bullet;
 	Barrel barrel;
+
 	Direction dir;          // 坦克的方向
 	
-
 public:
+	Bullet bullet;
 	void move(int);
 	void attack();
-
 	void draw();
 	void clear();
 

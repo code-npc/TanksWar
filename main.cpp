@@ -33,10 +33,16 @@ int main()
 			case 77:  // 右箭头键（ASCII 77）
 				tank.move(3);
 				break;
+			case 32:  // 空格键发射子弹
+				tank.attack();
+				break;
 			case 27:  // ESC 键（ASCII 27），退出程序
 				return 0;
 			}
 		}
+		// 子弹移动
+		tank.bullet.move();
+
 		tank.draw();
 		// 刷新屏幕显示
 		FlushBatchDraw();

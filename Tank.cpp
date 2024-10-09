@@ -70,9 +70,38 @@ void Barrel::clear() {
 
 }
 
+void Bullet::draw() {
+	if (active) {
+		rectangle(b_x - 2, b_y - 2, b_x + 2, b_y + 2);  // 画出一个小矩形来表示子弹
+	}
+}
+
+void Bullet::fire(int startX, int startY, Direction direction) {
+	b_x = startX;
+	b_y = startY;
+	dir = direction;
+	active = true;
+}
+void Bullet::move() {
+	if (!active) return;
+
+	switch (dir) {
+	case UP: b_y -= bullet_speed; break;
+	case DOWN: b_y += bullet_speed; break;
+	case LEFT: b_x -= bullet_speed; break;
+	case RIGHT: b_x += bullet_speed; break;
+	}
+
+	// 如果子弹超出屏幕范围，将其设为非活动状态
+	if (b_x < 0 || b_x > 640 || b_y < 0 || b_y > 480) {
+		active = false;
+	}
+}
+
 void Tank::draw() {
 	body.draw(x,y,dir);
 	barrel.draw(x,y,dir);
+	bullet.draw();  // 绘制子弹（如果存在）
 }
 
 void Tank::move(int direction) {
@@ -80,25 +109,25 @@ void Tank::move(int direction) {
 	case 0:
 		dir = UP;  // 改变方向为向上
 		if (y > tank_width/2) {
-			y -= dy;   // 向上移动
+			y -= tank_speed;   // 向上移动
 			break;
 		}
 	case 1:
 		dir = DOWN;  // 改变方向为向下
 		if (y < graph_high - (tank_width / 2)) {
-			y += dy;   // 向下移动
+			y += tank_speed;   // 向下移动
 			break;
 		}
 	case 2:
 		dir = LEFT;  // 改变方向为向左
 		if (x > tank_width/2) {
-			x -= dx;   // 向左移动
+			x -= tank_speed;   // 向左移动
 			break;
 		}
 	case 3:
 		dir = RIGHT;  // 改变方向为向右
 		if (x < graph_width - (tank_width/2)) {
-			x += dx;   // 向右移动
+			x += tank_speed;   // 向右移动
 			break;
 		}
 		
@@ -106,5 +135,18 @@ void Tank::move(int direction) {
 }
 
 void Tank::attack() {
-	std::cout << "tank 攻击" << std::endl;
+	if (!bullet.active) {
+		// 根据坦克的方向发射子弹
+		int bulletStartX = x;
+		int bulletStartY = y;
+
+		switch (dir) {
+		case UP:    bulletStartY -= 55; break;
+		case DOWN:  bulletStartY += 55; break;
+		case LEFT:  bulletStartX -= 55; break;
+		case RIGHT: bulletStartX += 55; break;
+		}
+
+		bullet.fire(bulletStartX, bulletStartY, dir);  // 发射子弹
+	}
 }
