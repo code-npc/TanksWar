@@ -40,8 +40,10 @@ int main()
 				return 0;
 			}
 		}
+		// 更新坦克、子弹和敌人
 		tank.updateBullets();
-
+		tank.updateEnemies();
+		tank.checkCollisions();
 		tank.draw();
 		// 刷新屏幕显示
 		FlushBatchDraw();

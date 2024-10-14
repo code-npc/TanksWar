@@ -6,8 +6,8 @@
 *	坦克整体大小：110 * 50
 *	窗口大小：640 * 480
 */
-const int graph_width = 640;
-const int graph_high = 480;
+const int graph_width = 640;//640
+const int graph_high = 480; //480
 
 int tank_high = 50;
 int tank_width = 110;
@@ -35,14 +35,6 @@ void Body::draw(int x,int y,Direction dir) {
 void Body::clear() {
 }
 
-void Wheel::draw(int ,int,Direction) {
-	//circle(200, 200, 10);	// 画圆，圆心(200, 200)，半径 100
-	//circle(200, 250, 10);
-	//circle(280, 200, 10);
-	//circle(280, 250, 10);
-}
-void Wheel::clear() {
-}
 
 void Barrel::draw(int x ,int y,Direction dir) {
 	switch (dir) {
@@ -95,7 +87,7 @@ void Bullet::move() {
 	}
 
 	// 如果子弹超出屏幕范围，将其设为非活动状态
-	if (b_x < 0 || b_x > 640 || b_y < 0 || b_y > 480) {
+	if (b_x < 0 || b_x > graph_width || b_y < 0 || b_y > graph_high) {
 		active = false;
 	}
 }
@@ -113,6 +105,31 @@ void Tank::updateBullets() {
 	);
 }
 
+void Tank::updateEnemies() {
+	// 更新敌人的状态
+	for (auto& enemy : Tank::enemies) {
+		enemy.move();
+	}
+
+	// 移除已被摧毁的敌人
+	Tank::enemies.erase(
+		std::remove_if(Tank::enemies.begin(), Tank::enemies.end(), [](EnemyTank& e) { return !e.isActive(); }),
+		Tank::enemies.end()
+	);
+}
+
+void Tank::checkCollisions() {
+	// 检查每个子弹是否打中敌人
+	for (auto& bullet : bullets) {
+		for (auto& enemy : enemies) {
+			if (enemy.isActive() && enemy.isHit(bullet)) {
+				enemy.destory();  // 敌人被摧毁
+				bullet.active = false;  // 子弹也失效
+			}
+		}
+	}
+}
+
 void Tank::draw() {
 	body.draw(x,y,dir);
 	barrel.draw(x,y,dir);
@@ -121,7 +138,11 @@ void Tank::draw() {
 	// 绘制所有有效的子弹
 	for (auto& bullet : bullets) {
 		bullet.draw();
-		
+	}
+
+	// 绘制所有活跃的敌人
+	for (auto& enemy : enemies) {
+		enemy.draw();
 	}
 }
 
@@ -147,7 +168,7 @@ void Tank::move(int direction) {
 		}
 	case 3:
 		dir = RIGHT;  // 改变方向为向右
-		if (x < graph_width - (tank_width/2)) {
+		if (x < graph_width - (tank_width / 2)) {
 			x += tank_speed;   // 向右移动
 			break;
 		}
@@ -172,4 +193,80 @@ void Tank::attack() {
 	for (auto& bullet : bullets) {
 		bullet.fire();  // 发射子弹
 	}
+}
+
+
+void EnemyTank::move()
+{
+	// 根据方向移动
+	c_time = time(NULL);
+
+	switch (dir) {
+	case UP: 
+		y -= speed;
+		if (y < 25) {
+			dir = (Direction)(rand() % 4); // 随机改变方向
+		}
+		else if (difftime(c_time, now) > 2) {
+			now = time(NULL);
+			dir = (Direction)(rand() % 4); 
+		}
+		break;
+	case DOWN:
+		y += speed;
+		if (y > graph_high-25) {
+			dir = (Direction)(rand() % 4); // 随机改变方向
+		}
+		else if (difftime(c_time, now) > 2) {
+			now = time(NULL);
+			dir = (Direction)(rand() % 4);
+		}
+		break;
+	case LEFT:
+		x -= speed;
+		if (x < 25) {
+			dir = (Direction)(rand() % 4); // 随机改变方向
+		}
+		else if (difftime(c_time, now) > 2) {
+			now = time(NULL);
+			dir = (Direction)(rand() % 4);
+		}
+		
+		break;
+	case RIGHT:
+		x += speed;
+		if (x > graph_width-25) {
+			dir = (Direction)(rand() % 4); // 随机改变方向
+		}
+		else if (difftime(c_time, now) > 2) {
+			now = time(NULL);
+			dir = (Direction)(rand() % 4);
+		}
+		break;
+	}
+}
+
+void EnemyTank::draw()
+{
+	if (active) {
+		// 绘制敌人坦克 (可自定义样式)
+		rectangle(x - 25, y - 25, x + 25, y + 25);
+	}
+}
+
+bool EnemyTank::isHit(Bullet& bullet)
+{
+	// 碰撞检测：如果子弹打中敌人
+	return (bullet.b_x > x - 25 && bullet.b_x < x + 25 &&
+		bullet.b_y > y - 25 && bullet.b_y < y + 25);
+}
+
+void EnemyTank::destory()
+{
+	active = false;  // 敌人被摧毁
+}
+
+bool EnemyTank::isActive()
+{
+	return active;
 }

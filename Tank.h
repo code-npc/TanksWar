@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <time.h>  
 
 extern const int graph_width;
 extern const int graph_high;
@@ -14,13 +15,6 @@ public:
 	virtual void clear() = 0;
 };
 
-
-class Wheel : TankPart{
-
-public:
-	void draw(int ,int, Direction) override;
-	void clear() override;
-};
 
 class Body : TankPart{
 public:
@@ -55,13 +49,30 @@ public:
 	
 };
 
+class EnemyTank {
+	int x, y;            // 敌人的位置
+	Direction dir;        // 敌人的方向
+	int speed = 2;        // 敌人移动的速度
+	bool active = true;   // 敌人是否还活跃
+	time_t now = time(NULL); // 敌人创建的时间
+	time_t c_time; //
+
+public:
+	EnemyTank(int startX, int startY, Direction direction)
+		: x(startX), y(startY), dir(direction) {}
+	void move();
+	void draw();
+	bool isHit(Bullet& bullet);
+	void destory();
+	bool isActive();
+};
+
 class Tank{
 	
 	int x = 255; //坦克的初始坐标x
 	int y = 200; //坦克的初始坐标y
 	int tank_speed = 5; //坦克的移动速度
 
-	Wheel wheel;//坦克的组成
 	Body body;
 	Barrel barrel;
 
@@ -69,14 +80,21 @@ class Tank{
 	
 public:
 	std::vector<Bullet> bullets;  // 子弹的容器
+	std::vector<EnemyTank> enemies;        // 敌人坦克的容器
 
 	void move(int);
 	void attack();
 	void draw();
 	void clear();
 	void updateBullets();  // 更新所有子弹的位置和状态
+	void updateEnemies(); 
+	void checkCollisions(); // 检测子弹与敌人的碰撞
 
 	Tank() {
 		dir = UP;
+		// 初始化敌人
+		enemies.push_back(EnemyTank(100, 100, DOWN));
+		enemies.push_back(EnemyTank(300, 300, UP));
+		enemies.push_back(EnemyTank(500, 200, LEFT));
 	}
 };
