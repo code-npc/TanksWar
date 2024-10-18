@@ -41,9 +41,6 @@ void Barrel::draw(int x ,int y,Direction dir) {
     case UP:
         rectangle(x - 5, y - 55, x + 5, y - 25);// 枪管
 
-        break;
-    case DOWN:
-        rectangle(x - 5, y + 25, x + 5, y + 55);// 枪管
 
         break;
     case LEFT:
@@ -168,23 +165,23 @@ void Tank::move(int direction) {
             x += tank_speed;   // 向右移动
             break;
         }
-        
+
     }
     dir = static_cast<decltype(dir)>(direction);
-}
+    } 
 
 void Tank::attack() {
     // 根据坦克的方向发射子弹
     int bulletStartX = x;
     int bulletStartY = y;
-
+    
     switch (dir) {
     case UP:    bulletStartY -= 55; break;
     case DOWN:  bulletStartY += 55; break;
     case LEFT:  bulletStartX -= 55; break;
     case RIGHT: bulletStartX += 55; break;
     }
-    
+
     // 发射新的子弹，添加到容器中
     bullets.emplace_back(Bullet(bulletStartX, bulletStartY, dir));
     for (auto& bullet : bullets) {
@@ -192,12 +189,21 @@ void Tank::attack() {
     }
 }
 
+public:
+    EnemyTank(int startX, int startY, Direction direction)
+        : x(startX), y(startY), dir(direction) {}
+    void move();
+    void draw();
+    bool isHit(Bullet& bullet);
+    void destory();
+    bool isActive();
+};
 
 void EnemyTank::move()
 {
     // 根据方向移动
     c_time = time(NULL);
-
+    
     switch (dir) {
     case UP: 
         y -= speed;
@@ -228,7 +234,7 @@ void EnemyTank::move()
             now = time(NULL);
             dir = (Direction)(rand() % 4);
         }
-        
+
         break;
     case RIGHT:
         x += speed;
@@ -250,7 +256,7 @@ void EnemyTank::draw()
         rectangle(x - 25, y - 25, x + 25, y + 25);
     }
 }
-
+    
 bool EnemyTank::isHit(Bullet& bullet)
 {
     // 碰撞检测：如果子弹打中敌人
@@ -266,4 +272,5 @@ void EnemyTank::destory()
 bool EnemyTank::isActive()
 {
     return active;
-}
+    }
+};
